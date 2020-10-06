@@ -26,8 +26,9 @@ namespace Practica1
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
             services.AddDbContext<Practica1Context>(options =>
-            options.UseSqlServer(Configuration.GetConnectionString("practica1")));
+            options.UseSqlServer(Configuration.GetConnectionString("Practica1")));
 
         }
 
