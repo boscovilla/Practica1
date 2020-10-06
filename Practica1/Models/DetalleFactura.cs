@@ -8,12 +8,12 @@ namespace Practica1.Models
     public class DetalleFactura
     {
 
-        public int DetFacturaId { get; set; }
+        public int DetalleFacturaId { get; set; }
         //fk
         public int FacturaId { get; set; }
-        public Factura factura { get; set; }
+       // public Factura Factura { get; set; }
 
-        public ICollection<Factura> Factura { get; set; }
+        public ICollection<Factura> _Factura { get; set; }
 
         //fk
         public int CancionId { get; set; }

@@ -20,7 +20,10 @@ namespace Practica1.Models
         public DateTime FechaFactura { get; set; }
 
         public float Total { get; set; }
-       // public DetalleFactura DetalleFactura { get; set; }
+
+        public int DetalleFacturaId { get; set; }
+        public DetalleFactura DetalleFactura { get; set; }
+        
 
 
     }
