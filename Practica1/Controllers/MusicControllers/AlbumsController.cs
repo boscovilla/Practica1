@@ -1,31 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Practica1.Data;
 using Practica1.Models;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Practica1.Controllers
 {
-    public class ArtistasController : Controller
+    public class AlbumsController : Controller
     {
         private readonly Practica1Context _context;
 
-        public ArtistasController(Practica1Context context)
+        public AlbumsController(Practica1Context context)
         {
             _context = context;
         }
 
-        // GET: Artistas
+        // GET: Albums
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Artista.ToListAsync());
+            var practica1Context = _context.Album.Include(a => a.Artista);
+            return View(await practica1Context.ToListAsync());
         }
 
-        // GET: Artistas/Details/5
+        // GET: Albums/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,39 +32,42 @@ namespace Practica1.Controllers
                 return NotFound();
             }
 
-            var artista = await _context.Artista
-                .FirstOrDefaultAsync(m => m.ArtistaId == id);
-            if (artista == null)
+            var album = await _context.Album
+                .Include(a => a.Artista)
+                .FirstOrDefaultAsync(m => m.AlbumId == id);
+            if (album == null)
             {
                 return NotFound();
             }
 
-            return View(artista);
+            return View(album);
         }
 
-        // GET: Artistas/Create
+        // GET: Albums/Create
         public IActionResult Create()
         {
+            ViewData["ArtistaId"] = new SelectList(_context.Artista, "ArtistaId", "ArtistaId");
             return View();
         }
 
-        // POST: Artistas/Create
+        // POST: Albums/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ArtistaId,Nombre")] Artista artista)
+        public async Task<IActionResult> Create([Bind("AlbumId,Titulo,ArtistaId")] Album album)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(artista);
+                _context.Add(album);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(artista);
+            ViewData["ArtistaId"] = new SelectList(_context.Artista, "ArtistaId", "ArtistaId", album.ArtistaId);
+            return View(album);
         }
 
-        // GET: Artistas/Edit/5
+        // GET: Albums/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -73,22 +75,23 @@ namespace Practica1.Controllers
                 return NotFound();
             }
 
-            var artista = await _context.Artista.FindAsync(id);
-            if (artista == null)
+            var album = await _context.Album.FindAsync(id);
+            if (album == null)
             {
                 return NotFound();
             }
-            return View(artista);
+            ViewData["ArtistaId"] = new SelectList(_context.Artista, "ArtistaId", "ArtistaId", album.ArtistaId);
+            return View(album);
         }
 
-        // POST: Artistas/Edit/5
+        // POST: Albums/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ArtistaId,Nombre")] Artista artista)
+        public async Task<IActionResult> Edit(int id, [Bind("AlbumId,Titulo,ArtistaId")] Album album)
         {
-            if (id != artista.ArtistaId)
+            if (id != album.AlbumId)
             {
                 return NotFound();
             }
@@ -97,12 +100,12 @@ namespace Practica1.Controllers
             {
                 try
                 {
-                    _context.Update(artista);
+                    _context.Update(album);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ArtistaExists(artista.ArtistaId))
+                    if (!AlbumExists(album.AlbumId))
                     {
                         return NotFound();
                     }
@@ -113,10 +116,11 @@ namespace Practica1.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(artista);
+            ViewData["ArtistaId"] = new SelectList(_context.Artista, "ArtistaId", "ArtistaId", album.ArtistaId);
+            return View(album);
         }
 
-        // GET: Artistas/Delete/5
+        // GET: Albums/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -124,30 +128,31 @@ namespace Practica1.Controllers
                 return NotFound();
             }
 
-            var artista = await _context.Artista
-                .FirstOrDefaultAsync(m => m.ArtistaId == id);
-            if (artista == null)
+            var album = await _context.Album
+                .Include(a => a.Artista)
+                .FirstOrDefaultAsync(m => m.AlbumId == id);
+            if (album == null)
             {
                 return NotFound();
             }
 
-            return View(artista);
+            return View(album);
         }
 
-        // POST: Artistas/Delete/5
+        // POST: Albums/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var artista = await _context.Artista.FindAsync(id);
-            _context.Artista.Remove(artista);
+            var album = await _context.Album.FindAsync(id);
+            _context.Album.Remove(album);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ArtistaExists(int id)
+        private bool AlbumExists(int id)
         {
-            return _context.Artista.Any(e => e.ArtistaId == id);
+            return _context.Album.Any(e => e.AlbumId == id);
         }
     }
 }

@@ -10,23 +10,22 @@ using Practica1.Models;
 
 namespace Practica1.Controllers
 {
-    public class AlbumsController : Controller
+    public class ClientesController : Controller
     {
         private readonly Practica1Context _context;
 
-        public AlbumsController(Practica1Context context)
+        public ClientesController(Practica1Context context)
         {
             _context = context;
         }
 
-        // GET: Albums
+        // GET: Clientes
         public async Task<IActionResult> Index()
         {
-            var practica1Context = _context.Album.Include(a => a.Artista);
-            return View(await practica1Context.ToListAsync());
+            return View(await _context.Cliente.ToListAsync());
         }
 
-        // GET: Albums/Details/5
+        // GET: Clientes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -34,42 +33,39 @@ namespace Practica1.Controllers
                 return NotFound();
             }
 
-            var album = await _context.Album
-                .Include(a => a.Artista)
-                .FirstOrDefaultAsync(m => m.AlbumId == id);
-            if (album == null)
+            var cliente = await _context.Cliente
+                .FirstOrDefaultAsync(m => m.ClienteId == id);
+            if (cliente == null)
             {
                 return NotFound();
             }
 
-            return View(album);
+            return View(cliente);
         }
 
-        // GET: Albums/Create
+        // GET: Clientes/Create
         public IActionResult Create()
         {
-            ViewData["ArtistaId"] = new SelectList(_context.Artista, "ArtistaId", "ArtistaId");
             return View();
         }
 
-        // POST: Albums/Create
+        // POST: Clientes/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("AlbumId,Titulo,ArtistaId")] Album album)
+        public async Task<IActionResult> Create([Bind("ClienteId,Nombres,Apellidos,Telefono,Email,SoporteId")] Cliente cliente)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(album);
+                _context.Add(cliente);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ArtistaId"] = new SelectList(_context.Artista, "ArtistaId", "ArtistaId", album.ArtistaId);
-            return View(album);
+            return View(cliente);
         }
 
-        // GET: Albums/Edit/5
+        // GET: Clientes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -77,23 +73,22 @@ namespace Practica1.Controllers
                 return NotFound();
             }
 
-            var album = await _context.Album.FindAsync(id);
-            if (album == null)
+            var cliente = await _context.Cliente.FindAsync(id);
+            if (cliente == null)
             {
                 return NotFound();
             }
-            ViewData["ArtistaId"] = new SelectList(_context.Artista, "ArtistaId", "ArtistaId", album.ArtistaId);
-            return View(album);
+            return View(cliente);
         }
 
-        // POST: Albums/Edit/5
+        // POST: Clientes/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("AlbumId,Titulo,ArtistaId")] Album album)
+        public async Task<IActionResult> Edit(int id, [Bind("ClienteId,Nombres,Apellidos,Telefono,Email,SoporteId")] Cliente cliente)
         {
-            if (id != album.AlbumId)
+            if (id != cliente.ClienteId)
             {
                 return NotFound();
             }
@@ -102,12 +97,12 @@ namespace Practica1.Controllers
             {
                 try
                 {
-                    _context.Update(album);
+                    _context.Update(cliente);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!AlbumExists(album.AlbumId))
+                    if (!ClienteExists(cliente.ClienteId))
                     {
                         return NotFound();
                     }
@@ -118,11 +113,10 @@ namespace Practica1.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ArtistaId"] = new SelectList(_context.Artista, "ArtistaId", "ArtistaId", album.ArtistaId);
-            return View(album);
+            return View(cliente);
         }
 
-        // GET: Albums/Delete/5
+        // GET: Clientes/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -130,31 +124,30 @@ namespace Practica1.Controllers
                 return NotFound();
             }
 
-            var album = await _context.Album
-                .Include(a => a.Artista)
-                .FirstOrDefaultAsync(m => m.AlbumId == id);
-            if (album == null)
+            var cliente = await _context.Cliente
+                .FirstOrDefaultAsync(m => m.ClienteId == id);
+            if (cliente == null)
             {
                 return NotFound();
             }
 
-            return View(album);
+            return View(cliente);
         }
 
-        // POST: Albums/Delete/5
+        // POST: Clientes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var album = await _context.Album.FindAsync(id);
-            _context.Album.Remove(album);
+            var cliente = await _context.Cliente.FindAsync(id);
+            _context.Cliente.Remove(cliente);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool AlbumExists(int id)
+        private bool ClienteExists(int id)
         {
-            return _context.Album.Any(e => e.AlbumId == id);
+            return _context.Cliente.Any(e => e.ClienteId == id);
         }
     }
 }
