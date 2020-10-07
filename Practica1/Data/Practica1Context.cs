@@ -15,5 +15,9 @@ namespace Practica1.Data
         }
 
         public DbSet<Artista> Artista{ get; set; }
+
+        public DbSet<Album> Album { get; set; }
+
+        public DbSet<Practica1.Models.Cancion> Cancion { get; set; }
     }
 }

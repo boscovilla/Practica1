@@ -10,7 +10,7 @@ using Practica1.Data;
 namespace Practica1.Migrations
 {
     [DbContext(typeof(Practica1Context))]
-    [Migration("20201006055406_InitialCreate")]
+    [Migration("20201007002517_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -69,7 +69,7 @@ namespace Practica1.Migrations
                     b.Property<int>("GeneroId")
                         .HasColumnType("int");
 
-                    b.Property<string>("NombreId")
+                    b.Property<string>("Nombre")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("CancionId");
@@ -136,6 +136,8 @@ namespace Practica1.Migrations
 
                     b.HasIndex("CancionId");
 
+                    b.HasIndex("FacturaId");
+
                     b.ToTable("DetalleFactura");
                 });
 
@@ -184,9 +186,6 @@ namespace Practica1.Migrations
                     b.Property<int>("ClienteId")
                         .HasColumnType("int");
 
-                    b.Property<int>("DetalleFacturaId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("FechaFactura")
                         .HasColumnType("datetime2");
 
@@ -196,8 +195,6 @@ namespace Practica1.Migrations
                     b.HasKey("FacturaId");
 
                     b.HasIndex("ClienteId");
-
-                    b.HasIndex("DetalleFacturaId");
 
                     b.ToTable("Factura");
                 });
@@ -229,13 +226,13 @@ namespace Practica1.Migrations
             modelBuilder.Entity("Practica1.Models.Cancion", b =>
                 {
                     b.HasOne("Practica1.Models.Album", "Album")
-                        .WithMany("CancionLista")
+                        .WithMany("Canciones")
                         .HasForeignKey("AlbumId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Practica1.Models.Genero", "Genero")
-                        .WithMany("CancionLista")
+                        .WithMany("Canciones")
                         .HasForeignKey("GeneroId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -244,15 +241,21 @@ namespace Practica1.Migrations
             modelBuilder.Entity("Practica1.Models.Cliente", b =>
                 {
                     b.HasOne("Practica1.Models.Empleado", "Empleado")
-                        .WithMany("ClienteLista")
+                        .WithMany("Clientes")
                         .HasForeignKey("EmpleadoId");
                 });
 
             modelBuilder.Entity("Practica1.Models.DetalleFactura", b =>
                 {
                     b.HasOne("Practica1.Models.Cancion", "Cancion")
-                        .WithMany("DetalleFacturaLista")
+                        .WithMany("DetalleFacturas")
                         .HasForeignKey("CancionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Practica1.Models.Factura", "Factura")
+                        .WithMany("DetalleFacturas")
+                        .HasForeignKey("FacturaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -260,21 +263,15 @@ namespace Practica1.Migrations
             modelBuilder.Entity("Practica1.Models.Empleado", b =>
                 {
                     b.HasOne("Practica1.Models.Empleado", null)
-                        .WithMany("EmpleadoLista")
+                        .WithMany("Empleados")
                         .HasForeignKey("EmpleadoId1");
                 });
 
             modelBuilder.Entity("Practica1.Models.Factura", b =>
                 {
                     b.HasOne("Practica1.Models.Cliente", "Cliente")
-                        .WithMany("FacturaLista")
+                        .WithMany("Facturas")
                         .HasForeignKey("ClienteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Practica1.Models.DetalleFactura", "DetalleFactura")
-                        .WithMany("_Factura")
-                        .HasForeignKey("DetalleFacturaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

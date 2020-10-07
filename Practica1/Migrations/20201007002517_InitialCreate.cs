@@ -108,7 +108,7 @@ namespace Practica1.Migrations
                 {
                     CancionId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    NombreId = table.Column<string>(nullable: true),
+                    Nombre = table.Column<string>(nullable: true),
                     AlbumId = table.Column<int>(nullable: false),
                     GeneroId = table.Column<int>(nullable: false)
                 },
@@ -126,6 +126,27 @@ namespace Practica1.Migrations
                         column: x => x.GeneroId,
                         principalTable: "Genero",
                         principalColumn: "GeneroId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Factura",
+                columns: table => new
+                {
+                    FacturaId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ClienteId = table.Column<int>(nullable: false),
+                    FechaFactura = table.Column<DateTime>(nullable: false),
+                    Total = table.Column<float>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Factura", x => x.FacturaId);
+                    table.ForeignKey(
+                        name: "FK_Factura_Cliente_ClienteId",
+                        column: x => x.ClienteId,
+                        principalTable: "Cliente",
+                        principalColumn: "ClienteId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -149,33 +170,11 @@ namespace Practica1.Migrations
                         principalTable: "Cancion",
                         principalColumn: "CancionId",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Factura",
-                columns: table => new
-                {
-                    FacturaId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ClienteId = table.Column<int>(nullable: false),
-                    FechaFactura = table.Column<DateTime>(nullable: false),
-                    Total = table.Column<float>(nullable: false),
-                    DetalleFacturaId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Factura", x => x.FacturaId);
                     table.ForeignKey(
-                        name: "FK_Factura_Cliente_ClienteId",
-                        column: x => x.ClienteId,
-                        principalTable: "Cliente",
-                        principalColumn: "ClienteId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Factura_DetalleFactura_DetalleFacturaId",
-                        column: x => x.DetalleFacturaId,
-                        principalTable: "DetalleFactura",
-                        principalColumn: "DetalleFacturaId",
+                        name: "FK_DetalleFactura_Factura_FacturaId",
+                        column: x => x.FacturaId,
+                        principalTable: "Factura",
+                        principalColumn: "FacturaId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -205,6 +204,11 @@ namespace Practica1.Migrations
                 column: "CancionId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_DetalleFactura_FacturaId",
+                table: "DetalleFactura",
+                column: "FacturaId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Empleado_EmpleadoId1",
                 table: "Empleado",
                 column: "EmpleadoId1");
@@ -213,29 +217,18 @@ namespace Practica1.Migrations
                 name: "IX_Factura_ClienteId",
                 table: "Factura",
                 column: "ClienteId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Factura_DetalleFacturaId",
-                table: "Factura",
-                column: "DetalleFacturaId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Factura");
-
-            migrationBuilder.DropTable(
-                name: "Cliente");
-
-            migrationBuilder.DropTable(
                 name: "DetalleFactura");
 
             migrationBuilder.DropTable(
-                name: "Empleado");
+                name: "Cancion");
 
             migrationBuilder.DropTable(
-                name: "Cancion");
+                name: "Factura");
 
             migrationBuilder.DropTable(
                 name: "Album");
@@ -244,7 +237,13 @@ namespace Practica1.Migrations
                 name: "Genero");
 
             migrationBuilder.DropTable(
+                name: "Cliente");
+
+            migrationBuilder.DropTable(
                 name: "Artista");
+
+            migrationBuilder.DropTable(
+                name: "Empleado");
         }
     }
 }
